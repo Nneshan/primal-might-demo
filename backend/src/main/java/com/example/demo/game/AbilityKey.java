@@ -1,0 +1,15 @@
+package com.example.demo.game;
+
+public enum AbilityKey {
+	FOREST_UNITY_DEF,
+	FOREST_UNITY_ATK,
+	FOREST_UNITY_ATK_DEF,
+	PIERCING,
+	INTIMIDATION,
+	RANGED,
+	FLIGHT,
+	INTERCEPT,
+	TAILWIND,
+	TAUNT,
+	ANCIENT_KNOWLEDGE
+}

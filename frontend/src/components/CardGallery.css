@@ -1,0 +1,76 @@
+.card-gallery {
+  width: 100%;
+  padding: 0.25rem 0;
+}
+
+.card-gallery-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-gallery-back {
+  flex-shrink: 0;
+  background: #2a4a2a;
+  border: 2px solid #5a8a5a;
+}
+
+.card-gallery-title {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #c5e6a5;
+}
+
+.card-gallery-game {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: #9bc49b;
+}
+
+.card-gallery-status {
+  color: #c8e6c8;
+  text-align: center;
+}
+
+.card-gallery-error {
+  color: #ffb4b4;
+  background: #4a2020;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.card-gallery-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.card-gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.35rem;
+  background: #1e301e;
+  border-radius: 8px;
+  border: 2px solid #3d5a3d;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.card-gallery-item:hover {
+  border-color: #8fcf8f;
+  box-shadow: 0 0 12px #8fcf8f44;
+}
+
+.card-gallery-item img {
+  display: block;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}

@@ -1,0 +1,70 @@
+.ancient-knowledge-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 16, 8, 0.82);
+  padding: 1rem;
+}
+
+.ancient-knowledge-panel {
+  max-width: 960px;
+  width: 100%;
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: #243824;
+  border: 2px solid #8fcf8f;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.ancient-knowledge-panel h2 {
+  margin: 0 0 0.35rem;
+  color: #c5e6a5;
+  font-size: 1.15rem;
+}
+
+.ancient-knowledge-panel p {
+  margin: 0 0 1rem;
+  color: #d8ead8;
+  font-size: 0.95rem;
+}
+
+.ancient-knowledge-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.ancient-knowledge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  background: #1e301e;
+  border: 2px solid #5a8a5a;
+  border-radius: 10px;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.ancient-knowledge-card:hover:not(:disabled) {
+  border-color: #ffd54f;
+  box-shadow: 0 0 16px #ffd54f66;
+}
+
+.ancient-knowledge-card:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ancient-knowledge-card img {
+  display: block;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

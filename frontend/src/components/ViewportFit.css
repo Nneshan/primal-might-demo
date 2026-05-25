@@ -1,0 +1,14 @@
+.viewport-fit {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #1a2e1a;
+}
+
+.viewport-fit__scaled {
+  transform-origin: top center;
+  flex-shrink: 0;
+}

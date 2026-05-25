@@ -1,0 +1,3 @@
+# Скопируйте этот файл как application-local.properties и укажите пароль MySQL:
+spring.datasource.password=ваш_пароль
+

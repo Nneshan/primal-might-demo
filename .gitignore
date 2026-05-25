@@ -1,0 +1,26 @@
+# IDE
+.idea/
+.gigaide/
+*.iml
+
+# Backend (Maven / Spring)
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Локальные настройки с паролем (не коммитить)
+backend/src/main/resources/application-local.properties
+
+# Frontend (дополнительно к frontend/.gitignore)
+frontend/node_modules/
+frontend/build/
+
+# ОС
+.DS_Store
+Thumbs.db
+
+# Логи и env
+*.log
+.env
+.env.*

@@ -1,0 +1,44 @@
+.main-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.main-menu-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #c5e6a5;
+  text-shadow: 0 0 24px rgba(143, 207, 143, 0.35);
+}
+
+.main-menu-subtitle {
+  margin: 0 0 2.5rem;
+  font-size: 1rem;
+  color: #9bc49b;
+}
+
+.main-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: min(100%, 280px);
+}
+
+.main-menu-btn {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: 2px solid #4a7a4a;
+}
+
+.main-menu-btn:hover:not(:disabled) {
+  background: #4a8a4a;
+  border-color: #8fcf8f;
+}
