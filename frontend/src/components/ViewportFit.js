@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import './ViewportFit.css';
 
-/** Фиксированный «макет» — масштаб только от размера окна, не от числа карт. */
 const DESIGN_WIDTH = 1720;
 const DESIGN_HEIGHT = 900;
 const MIN_SCALE = 0.4;

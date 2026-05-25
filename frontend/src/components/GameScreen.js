@@ -325,7 +325,6 @@ function GameScreen({ onBack }) {
             </div>
             <div className="creature-row">
               {game.opponentBoard.map((creature) => {
-                // true/false с сервера; если поля нет (старый бэкенд) — не тускнить все цели
                 const isValidTarget = attackAiming && creature.attackable !== false;
                 const dimTarget = attackAiming && creature.attackable === false;
                 return (

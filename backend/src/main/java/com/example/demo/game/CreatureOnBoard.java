@@ -9,7 +9,6 @@ public class CreatureOnBoard {
 	private int attack;
 	private int defense;
 	private int initiative;
-	/** false в ход разыгрывания и после атаки в этом ходу */
 	private boolean canAttack;
 
 	public String getInstanceId() {

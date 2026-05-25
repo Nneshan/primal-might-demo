@@ -240,7 +240,6 @@ public class GameService {
 		return saveAndMap(gameId, state);
 	}
 
-	/** Награда после боя: добавить копии карт в колоду игрока (для будущего экрана наград). */
 	@Transactional
 	public GameStateResponseDto addRewardCardsToPlayerDeck(Long gameId, List<Long> cardDefinitionIds) {
 		GameState state = loadState(gameId);

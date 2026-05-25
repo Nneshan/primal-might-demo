@@ -7,7 +7,6 @@ import './CardTooltip.css';
 const VIEWPORT_MARGIN = 12;
 const GAP = 10;
 
-/** Одно описание из card_definitions + card_descriptions — и для руки, и для поля. */
 function CardTooltip({
   card,
   currentHealth,

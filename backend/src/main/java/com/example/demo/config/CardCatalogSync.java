@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.example.demo.entity.CardDefinition;
 import com.example.demo.repository.CardDefinitionRepository;
 
-/** Синхронизация каталога при каждом запуске (новые карты, типы, спрайты). */
 @Component
 @Order(2)
 public class CardCatalogSync implements ApplicationRunner {
@@ -27,7 +26,6 @@ public class CardCatalogSync implements ApplicationRunner {
 		upsert("Корнестраж", 5, 25, 3, 3, 2, 4, "Дух,Древолюд", "RootwardenHand.png", "Rootwarden.png");
 		upsert("Гонец облаков", 3, 8, 4, 0, 9, 2, "Дух", "RunnerOfCloudsHand.png", "RunnerOfClouds.png");
 		upsert("Дриада", 3, 9, 3, 0, 8, 3, "Дух,Древолюд", "DryadHand.png", "Dryad.png");
-		// старые имена → актуальные карты
 		renameAndUpsert("Лесной дух", "Флороид", 2, 5, 2, 0, 3, 1, "Дух,Древолюд", "FloroidHand.png", "Floroid.png");
 	}
 

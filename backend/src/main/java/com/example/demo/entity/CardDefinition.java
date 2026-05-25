@@ -36,11 +36,9 @@ public class CardDefinition {
 	@Column(nullable = false)
 	private int level;
 
-	/** Несколько типов через запятую, например: Дух,Древолюд */
 	@Column(name = "creature_type", nullable = false, length = 120)
 	private String creatureTypes;
 
-	/** Путь для React: public/cards/... */
 	@Column(nullable = false)
 	private String spriteHand;
 

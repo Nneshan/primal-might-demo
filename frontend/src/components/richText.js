@@ -1,4 +1,3 @@
-/** Текст с *курсивом* внутри предложения */
 export function renderRichText(text) {
   if (!text) {
     return null;

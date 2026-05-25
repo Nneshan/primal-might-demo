@@ -7,7 +7,7 @@
 
 .card-tooltip--portal {
   position: fixed;
-  z-index: 10000; /* переопределяется inline при elevated (модалка) */
+  z-index: 10000;
   min-width: 220px;
   max-width: min(320px, calc(100vw - 24px));
   padding: 0.65rem 0.75rem;

@@ -220,7 +220,6 @@ public class AbilityService {
 		deck.addAll(remainder);
 	}
 
-	/** Для ИИ: взять верхнюю из просмотренных. */
 	public void resolveAncientKnowledgeAuto(List<CardInZone> scryCards, List<CardInZone> deck, List<CardInZone> hand) {
 		if (scryCards.isEmpty()) {
 			return;
@@ -244,7 +243,6 @@ public class AbilityService {
 		if (attackerFlies) {
 			return !hasFlyingOrInterceptOnBoard(aliveOpponents);
 		}
-		// Наземный: летающие на поле не блокируют удар по HP, только наземные/перехватчики
 		return !hasGroundBlockerOnBoard(aliveOpponents);
 	}
 

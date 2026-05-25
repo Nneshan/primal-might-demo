@@ -22,7 +22,6 @@ public class CardDescription {
 	@JoinColumn(name = "card_definition_id", unique = true, nullable = false)
 	private CardDefinition cardDefinition;
 
-	/** JSON: [{"name":"...","text":"... с *курсивом* внутри"}] */
 	@Column(columnDefinition = "TEXT")
 	private String abilitiesJson;
 
