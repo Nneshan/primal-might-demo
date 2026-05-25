@@ -10,7 +10,7 @@ function AncientKnowledgeModal({ options, loading, onPick }) {
     <div className="ancient-knowledge-overlay" role="dialog" aria-modal="true" aria-labelledby="ak-title">
       <div className="ancient-knowledge-panel">
         <h2 id="ak-title">Древние Знания</h2>
-        <p>Посмотрите верхние карты колоды и выберите одну в руку. Остальные уйдут вниз колоды.</p>
+        <p>Посмотрите 3 верхние карты колоды и выберите одну в руку. Остальные уйдут вниз колоды.</p>
         <div className="ancient-knowledge-cards">
           {options.map((option) => (
             <CardTooltip key={option.instanceId} card={option.card} elevated>
