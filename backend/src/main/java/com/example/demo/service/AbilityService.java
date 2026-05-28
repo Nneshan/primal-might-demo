@@ -17,7 +17,7 @@ import com.example.demo.repository.CardDefinitionRepository;
 @Service
 public class AbilityService {
 
-	private static final String TREANT_TYPE = "Древолюд";
+	private static final String TREEMAN_TYPE = "Древолюд";
 	private static final String ROCK_SOLIDITY = "Твердость Скалы";
 
 	private final CardDefinitionRepository cardDefinitionRepository;
@@ -287,7 +287,7 @@ public class AbilityService {
 	}
 
 	private boolean isTreant(CardDefinition card) {
-		return card.getCreatureTypes() != null && card.getCreatureTypes().contains(TREANT_TYPE);
+		return card.getCreatureTypes() != null && card.getCreatureTypes().contains(TREEMAN_TYPE);
 	}
 
 	private CardAbilityDto findAbility(CardDefinition card, AbilityKey abilityKey) {
