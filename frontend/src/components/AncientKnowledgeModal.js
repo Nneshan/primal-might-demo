@@ -20,7 +20,12 @@ function AncientKnowledgeModal({ options, loading, onPick }) {
                 disabled={loading}
                 onClick={() => onPick(option.instanceId)}
               >
-                <img src={option.card.spriteHand} alt={option.card.name} />
+                <img
+                  src={option.card.spriteHand}
+                  alt={option.card.name}
+                  loading="eager"
+                  decoding="sync"
+                />
               </button>
             </CardTooltip>
           ))}

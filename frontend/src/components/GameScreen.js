@@ -6,6 +6,10 @@ import CardTooltip from './CardTooltip';
 import CardBrief from './CardBrief';
 import AttackLineOverlay from './AttackLineOverlay';
 import AncientKnowledgeModal from './AncientKnowledgeModal';
+import {
+  preloadCatalogSprites,
+  preloadSpritesFromGameState,
+} from '../utils/cardSpritePreload';
 
 function GameScreen({ onBack }) {
   const [game, setGame] = useState(null);
@@ -28,6 +32,16 @@ function GameScreen({ onBack }) {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    preloadCatalogSprites();
+  }, []);
+
+  useEffect(() => {
+    if (game) {
+      preloadSpritesFromGameState(game);
+    }
+  }, [game]);
 
   useEffect(() => {
     let cancelled = false;
@@ -366,6 +380,8 @@ function GameScreen({ onBack }) {
                       src={creature.card.spriteBoard}
                       alt={creature.card.name}
                       draggable={false}
+                      loading="eager"
+                      decoding="sync"
                     />
                     <CardBrief
                       card={creature.card}
@@ -424,6 +440,8 @@ function GameScreen({ onBack }) {
                         src={creature.card.spriteBoard}
                         alt={creature.card.name}
                         draggable={false}
+                        loading="eager"
+                        decoding="sync"
                       />
                       <CardBrief
                         card={creature.card}
@@ -479,7 +497,12 @@ function GameScreen({ onBack }) {
                     }
                     onClick={() => onPlayCard(item.handIndex)}
                   >
-                    <img src={item.card.spriteHand} alt={item.card.name} />
+                    <img
+                      src={item.card.spriteHand}
+                      alt={item.card.name}
+                      loading="eager"
+                      decoding="sync"
+                    />
                   </button>
                 </CardTooltip>
               ))}

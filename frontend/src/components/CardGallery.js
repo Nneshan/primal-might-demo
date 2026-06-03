@@ -3,6 +3,7 @@ import * as cardApi from '../api/cardApi';
 import CardTooltip from './CardTooltip';
 import { GAME_TITLE } from '../constants';
 import './CardGallery.css';
+import { preloadSpriteUrls, collectSpriteUrlsFromCards } from '../utils/cardSpritePreload';
 
 function CardGallery({ onBack }) {
   const [cards, setCards] = useState([]);
@@ -18,6 +19,7 @@ function CardGallery({ onBack }) {
       .then((data) => {
         if (!cancelled) {
           setCards(data);
+          preloadSpriteUrls(collectSpriteUrlsFromCards(data));
         }
       })
       .catch((e) => {
@@ -55,7 +57,13 @@ function CardGallery({ onBack }) {
           {cards.map((card) => (
             <CardTooltip key={card.id} card={card} elevated>
               <div className="card-gallery-item">
-                <img src={card.spriteHand} alt={card.name} draggable={false} />
+                <img
+                  src={card.spriteHand}
+                  alt={card.name}
+                  draggable={false}
+                  loading="eager"
+                  decoding="sync"
+                />
               </div>
             </CardTooltip>
           ))}

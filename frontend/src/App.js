@@ -3,6 +3,7 @@ import './App.css';
 import MainMenu from './components/MainMenu';
 import CardGallery from './components/CardGallery';
 import GameScreen from './components/GameScreen';
+import { preloadCatalogSprites } from './utils/cardSpritePreload';
 
 function App() {
   const [screen, setScreen] = useState('menu');
@@ -11,7 +12,10 @@ function App() {
     <div className="app">
       {screen === 'menu' && (
         <MainMenu
-          onNewGame={() => setScreen('game')}
+          onNewGame={() => {
+            preloadCatalogSprites();
+            setScreen('game');
+          }}
           onGallery={() => setScreen('gallery')}
         />
       )}
