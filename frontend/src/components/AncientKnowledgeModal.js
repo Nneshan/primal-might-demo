@@ -1,4 +1,5 @@
 import CardTooltip from './CardTooltip';
+import CardSprite from './CardSprite';
 import './AncientKnowledgeModal.css';
 
 function AncientKnowledgeModal({ options, loading, onPick }) {
@@ -20,12 +21,7 @@ function AncientKnowledgeModal({ options, loading, onPick }) {
                 disabled={loading}
                 onClick={() => onPick(option.instanceId)}
               >
-                <img
-                  src={option.card.spriteHand}
-                  alt={option.card.name}
-                  loading="eager"
-                  decoding="sync"
-                />
+                <CardSprite src={option.card.spriteHand} alt={option.card.name} />
               </button>
             </CardTooltip>
           ))}

@@ -39,6 +39,7 @@ public class GameStateResponseDto {
 	private PendingChoiceType pendingChoice;
 	private List<HandCardDto> scryOptions;
 	private boolean canAttackFace;
+	private List<OpponentReplayActionDto> opponentReplay;
 
 	public Long getGameId() {
 		return gameId;
@@ -238,5 +239,13 @@ public class GameStateResponseDto {
 
 	public void setCanAttackFace(boolean canAttackFace) {
 		this.canAttackFace = canAttackFace;
+	}
+
+	public List<OpponentReplayActionDto> getOpponentReplay() {
+		return opponentReplay;
+	}
+
+	public void setOpponentReplay(List<OpponentReplayActionDto> opponentReplay) {
+		this.opponentReplay = opponentReplay;
 	}
 }

@@ -12,11 +12,13 @@ import com.example.demo.dto.BoardCreatureDto;
 import com.example.demo.dto.CardViewDto;
 import com.example.demo.dto.GameStateResponseDto;
 import com.example.demo.dto.HandCardDto;
+import com.example.demo.dto.OpponentReplayActionDto;
 import com.example.demo.entity.CardDefinition;
 import com.example.demo.game.CardInZone;
 import com.example.demo.game.CreatureOnBoard;
 import com.example.demo.game.GamePhase;
 import com.example.demo.game.GameState;
+import com.example.demo.game.OpponentReplayAction;
 import com.example.demo.game.PendingChoiceType;
 import com.example.demo.game.TurnOwner;
 import com.example.demo.repository.CardDefinitionRepository;
@@ -70,7 +72,28 @@ public class GameStateMapper {
 			dto.setScryOptions(mapHand(state.getPendingScryCards(), definitions));
 		}
 		dto.setCanAttackFace(computeCanAttackFace(state));
+		dto.setOpponentReplay(mapOpponentReplay(state.getOpponentReplay()));
 		return dto;
+	}
+
+	private List<OpponentReplayActionDto> mapOpponentReplay(List<OpponentReplayAction> actions) {
+		if (actions == null || actions.isEmpty()) {
+			return List.of();
+		}
+		return actions.stream().map(action -> {
+			OpponentReplayActionDto dto = new OpponentReplayActionDto();
+			dto.setType(action.getType().name());
+			dto.setInstanceId(action.getInstanceId());
+			dto.setAttackerInstanceId(action.getAttackerInstanceId());
+			dto.setTargetInstanceId(action.getTargetInstanceId());
+			dto.setCard(action.getCard());
+			dto.setAttackerHealthAfter(action.getAttackerHealthAfter());
+			dto.setTargetHealthAfter(action.getTargetHealthAfter());
+			dto.setAttackerRemoved(action.isAttackerRemoved());
+			dto.setTargetRemoved(action.isTargetRemoved());
+			dto.setPlayerHealthAfter(action.getPlayerHealthAfter());
+			return dto;
+		}).toList();
 	}
 
 	private boolean computeCanAttackFace(GameState state) {

@@ -14,6 +14,8 @@ import com.example.demo.game.CardInZone;
 import com.example.demo.game.CreatureOnBoard;
 import com.example.demo.game.GamePhase;
 import com.example.demo.game.GameState;
+import com.example.demo.game.OpponentReplayAction;
+import com.example.demo.game.OpponentReplayActionType;
 import com.example.demo.game.TurnOwner;
 import com.example.demo.repository.CardDefinitionRepository;
 
@@ -21,15 +23,18 @@ import com.example.demo.repository.CardDefinitionRepository;
 public class AiService {
 
 	private final CardDefinitionRepository cardDefinitionRepository;
+	private final CardCatalogService cardCatalogService;
 	private final CombatService combatService;
 	private final AbilityService abilityService;
 
 	public AiService(
 		CardDefinitionRepository cardDefinitionRepository,
+		CardCatalogService cardCatalogService,
 		CombatService combatService,
 		AbilityService abilityService
 	) {
 		this.cardDefinitionRepository = cardDefinitionRepository;
+		this.cardCatalogService = cardCatalogService;
 		this.combatService = combatService;
 		this.abilityService = abilityService;
 	}
@@ -38,6 +43,7 @@ public class AiService {
 		if (state.isGameOver()) {
 			return;
 		}
+		state.setOpponentReplay(new ArrayList<>());
 		prepareOpponentTurnStart(state);
 		state.setTurnOwner(TurnOwner.OPPONENT);
 		state.setPhase(GamePhase.PLAY);
@@ -106,6 +112,8 @@ public class AiService {
 		creature.setCanAttack(false);
 		state.getOpponentBoard().add(creature);
 
+		recordPlayCard(state, card.getInstanceId(), definition);
+
 		if (abilityService.hasAbility(definition, AbilityKey.ANCIENT_KNOWLEDGE)) {
 			List<CardInZone> scryCards = abilityService.beginAncientKnowledge(state.getOpponentDeck());
 			abilityService.resolveAncientKnowledgeAuto(scryCards, state.getOpponentDeck(), state.getOpponentHand());
@@ -122,7 +130,13 @@ public class AiService {
 			}
 
 			if (abilityService.canAttackFace(attacker, state.getPlayerBoard())) {
+				OpponentReplayAction faceAction = recordAttackFace(state, attackerId);
 				combatService.applyFaceAttack(attacker, state, false, state.getOpponentBoard());
+				faceAction.setPlayerHealthAfter(state.getPlayerHealth());
+				faceAction.setAttackerRemoved(!attacker.isAlive());
+				if (!faceAction.isAttackerRemoved()) {
+					faceAction.setAttackerHealthAfter(attacker.getCurrentHealth());
+				}
 				checkGameOver(state);
 			}
 			else if (!state.getPlayerBoard().isEmpty()) {
@@ -132,6 +146,7 @@ public class AiService {
 					state.setAttackQueueIndex(state.getAttackQueueIndex() + 1);
 					continue;
 				}
+				OpponentReplayAction combatAction = recordAttackCreature(state, attackerId, target.getInstanceId());
 				combatService.applyCreatureCombat(
 					attacker,
 					target,
@@ -140,6 +155,7 @@ public class AiService {
 				);
 				combatService.removeDeadCreatures(state.getPlayerBoard());
 				combatService.removeDeadCreatures(state.getOpponentBoard());
+				fillCombatOutcomes(combatAction, attacker, target);
 				checkGameOver(state);
 			}
 			else {
@@ -149,6 +165,52 @@ public class AiService {
 		}
 		state.setAttackQueue(Collections.emptyList());
 		state.setAttackQueueIndex(0);
+	}
+
+	private void recordPlayCard(GameState state, String instanceId, CardDefinition definition) {
+		OpponentReplayAction action = new OpponentReplayAction();
+		action.setType(OpponentReplayActionType.PLAY_CARD);
+		action.setInstanceId(instanceId);
+		action.setCard(cardCatalogService.toDto(definition));
+		state.getOpponentReplay().add(action);
+	}
+
+	private OpponentReplayAction recordAttackCreature(
+		GameState state,
+		String attackerInstanceId,
+		String targetInstanceId
+	) {
+		OpponentReplayAction action = new OpponentReplayAction();
+		action.setType(OpponentReplayActionType.ATTACK_CREATURE);
+		action.setAttackerInstanceId(attackerInstanceId);
+		action.setTargetInstanceId(targetInstanceId);
+		state.getOpponentReplay().add(action);
+		return action;
+	}
+
+	private OpponentReplayAction recordAttackFace(GameState state, String attackerInstanceId) {
+		OpponentReplayAction action = new OpponentReplayAction();
+		action.setType(OpponentReplayActionType.ATTACK_FACE);
+		action.setAttackerInstanceId(attackerInstanceId);
+		state.getOpponentReplay().add(action);
+		return action;
+	}
+
+	private void fillCombatOutcomes(
+		OpponentReplayAction action,
+		CreatureOnBoard attacker,
+		CreatureOnBoard target
+	) {
+		boolean attackerOnBoard = attacker.isAlive();
+		boolean targetOnBoard = target.isAlive();
+		action.setAttackerRemoved(!attackerOnBoard);
+		action.setTargetRemoved(!targetOnBoard);
+		if (attackerOnBoard) {
+			action.setAttackerHealthAfter(attacker.getCurrentHealth());
+		}
+		if (targetOnBoard) {
+			action.setTargetHealthAfter(target.getCurrentHealth());
+		}
 	}
 
 	private CreatureOnBoard pickAttackTarget(CreatureOnBoard attacker, List<CreatureOnBoard> defenderBoard) {

@@ -1,0 +1,16 @@
+.faction-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.faction-badge--compact {
+  font-size: 0.62rem;
+  padding: 0.1rem 0.35rem;
+}

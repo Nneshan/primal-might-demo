@@ -14,6 +14,18 @@
   color: #c8e6c8;
 }
 
+.game-loading--blocking {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  background: #1a2e1af2;
+  font-size: 1.15rem;
+}
+
 .game-load-fail {
   display: flex;
   flex-direction: column;
@@ -161,21 +173,18 @@ button:disabled {
   margin-bottom: 0;
 }
 
-.board h2,
-.hand h2 {
+.board h2 {
   margin: 0 0 0.5rem;
   font-size: 1rem;
   color: #9bc49b;
 }
 
-.hand,
 .board {
   width: 100%;
   overflow: visible;
 }
 
-.creature-row,
-.hand-row {
+.creature-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -187,40 +196,75 @@ button:disabled {
   background: #2a3f2a;
   border-radius: 8px;
   overflow: visible;
-}
-
-.creature-row {
   min-height: 140px;
   align-content: center;
 }
 
-.hand-row {
-  flex-wrap: nowrap;
-  justify-content: center;
-  min-height: 120px;
-  align-items: flex-end;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+.creature-row--layout {
+  position: relative;
 }
 
-.hand-row .card-tooltip-wrap {
+.player-bottom-zone {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 2rem;
+  padding: 0.25rem 0.75rem 0.5rem;
+  overflow: visible;
+}
+
+.hand-fan-rows {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: calc(100% - 100px);
+  overflow: visible;
+}
+
+.hand-fan-rows[data-hand-rows='2'] {
+  min-height: 300px;
+}
+
+.hand-fan {
   position: relative;
   flex-shrink: 0;
-  transition: transform 0.12s ease, z-index 0s;
+  width: 100%;
+  min-height: 150px;
+  overflow: visible;
+  z-index: 1;
 }
 
-.hand-row .card-tooltip-wrap:not(:first-child) {
-  margin-left: -28px;
+/* второй ряд (7+) — ниже первого на экране, поверх него */
+.hand-fan--lower {
+  z-index: 5;
+  margin-top: -5.5rem;
 }
 
-.hand-row--stacked .card-tooltip-wrap:not(:first-child) {
-  margin-left: -52px;
+.hand-fan__slot {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(calc(-50% + var(--fan-offset, 0px)))
+    translateY(calc(-1 * var(--fan-lift, 0px)));
+  transition: transform 0.14s ease, z-index 0s;
 }
 
-.hand-row .card-tooltip-wrap:hover,
-.hand-row .card-tooltip-wrap:focus-within {
-  z-index: 100 !important;
-  transform: translateY(-14px);
+.hand-fan__slot:hover,
+.hand-fan__slot:focus-within {
+  z-index: 200 !important;
+  transform: translateX(calc(-50% + var(--fan-offset, 0px)))
+    translateY(calc(-1 * var(--fan-lift, 0px) - 18px));
+}
+
+.hand-fan__slot .card-tooltip-wrap {
+  display: block;
 }
 
 .creature-slot,
@@ -240,6 +284,11 @@ button:disabled {
   border: 2px solid transparent;
   border-radius: 8px;
   background: #1e301e;
+}
+
+.hand-card:disabled {
+  opacity: 1;
+  cursor: default;
 }
 
 .hand-card--playable {
@@ -315,6 +364,49 @@ button:disabled {
   box-shadow: 0 0 14px #ff8a8066;
 }
 
+.creature-slot--hit {
+  animation: creature-hit-shake 0.38s ease-out;
+  box-shadow: 0 0 18px #ff8a80aa;
+}
+
+@keyframes creature-hit-shake {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  15% {
+    transform: translate(-7px, 3px) scale(0.97);
+  }
+  32% {
+    transform: translate(8px, -3px) scale(1.02);
+  }
+  50% {
+    transform: translate(-5px, 2px) scale(0.98);
+  }
+  68% {
+    transform: translate(4px, -1px) scale(1);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.face-target-ring--hit {
+  animation: face-hit-pulse 0.34s ease-out;
+  box-shadow: 0 0 22px #ff8a80cc;
+}
+
+@keyframes face-hit-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .creature-slot.attack-target-blocked {
   opacity: 0.4;
   cursor: default;
@@ -340,6 +432,28 @@ button:disabled {
   gap: 1rem;
   width: 100%;
   padding: 0.35rem 0;
+}
+
+.player-face-zone {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.face-target-ring--player {
+  width: 52px;
+  height: 52px;
+  border-width: 2px;
+  flex-shrink: 0;
+}
+
+.status-block--player-face p {
+  margin: 0;
+}
+
+.creature-slot--replay-lock {
+  pointer-events: none;
 }
 
 .opponent-face-stats {

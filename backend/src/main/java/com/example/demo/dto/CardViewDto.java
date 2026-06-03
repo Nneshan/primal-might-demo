@@ -14,6 +14,9 @@ public class CardViewDto {
 	private int initiative;
 	private int level;
 	private List<String> creatureTypes;
+	private String faction;
+	private String factionLabel;
+	private String factionNameEn;
 	private String spriteHand;
 	private String spriteBoard;
 	private List<CardAbilityDto> abilities = new ArrayList<>();
@@ -89,6 +92,30 @@ public class CardViewDto {
 
 	public void setCreatureTypes(List<String> creatureTypes) {
 		this.creatureTypes = creatureTypes;
+	}
+
+	public String getFaction() {
+		return faction;
+	}
+
+	public void setFaction(String faction) {
+		this.faction = faction;
+	}
+
+	public String getFactionLabel() {
+		return factionLabel;
+	}
+
+	public void setFactionLabel(String factionLabel) {
+		this.factionLabel = factionLabel;
+	}
+
+	public String getFactionNameEn() {
+		return factionNameEn;
+	}
+
+	public void setFactionNameEn(String factionNameEn) {
+		this.factionNameEn = factionNameEn;
 	}
 
 	public String getSpriteHand() {

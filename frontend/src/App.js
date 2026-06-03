@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import MainMenu from './components/MainMenu';
 import CardGallery from './components/CardGallery';
@@ -7,6 +7,10 @@ import { preloadCatalogSprites } from './utils/cardSpritePreload';
 
 function App() {
   const [screen, setScreen] = useState('menu');
+
+  useEffect(() => {
+    preloadCatalogSprites().catch(() => {});
+  }, []);
 
   return (
     <div className="app">

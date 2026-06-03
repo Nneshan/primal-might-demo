@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.CardAbilityDto;
 import com.example.demo.dto.CardViewDto;
 import com.example.demo.entity.CardDefinition;
+import com.example.demo.game.Faction;
 import com.example.demo.repository.CardDefinitionRepository;
 import com.example.demo.repository.CardDescriptionRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,6 +52,10 @@ public class CardCatalogService {
 		dto.setInitiative(definition.getInitiative());
 		dto.setLevel(definition.getLevel());
 		dto.setCreatureTypes(parseTypes(definition.getCreatureTypes()));
+		Faction faction = definition.getFaction() != null ? definition.getFaction() : Faction.MIGHT;
+		dto.setFaction(faction.name());
+		dto.setFactionLabel(faction.getLabelRu());
+		dto.setFactionNameEn(faction.getLabelEn());
 		dto.setSpriteHand(definition.getSpriteHand());
 		dto.setSpriteBoard(definition.getSpriteBoard());
 		cardDescriptionRepository.findByCardDefinitionId(definition.getId()).ifPresent(description -> {

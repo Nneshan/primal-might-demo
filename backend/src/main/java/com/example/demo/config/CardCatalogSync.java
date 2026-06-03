@@ -6,6 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.entity.CardDefinition;
+import com.example.demo.game.Faction;
 import com.example.demo.repository.CardDefinitionRepository;
 
 @Component
@@ -27,6 +28,16 @@ public class CardCatalogSync implements ApplicationRunner {
 		upsert("Гонец облаков", 3, 8, 4, 0, 9, 2, "Дух", "RunnerOfCloudsHand.png", "RunnerOfClouds.png");
 		upsert("Дриада", 3, 9, 3, 0, 8, 3, "Дух,Древолюд", "DryadHand.png", "Dryad.png");
 		renameAndUpsert("Лесной дух", "Флороид", 2, 5, 2, 0, 3, 1, "Дух,Древолюд", "FloroidHand.png", "Floroid.png");
+		backfillFaction();
+	}
+
+	private void backfillFaction() {
+		cardDefinitionRepository.findAll().stream()
+			.filter(card -> card.getFaction() == null)
+			.forEach(card -> {
+				card.setFaction(Faction.MIGHT);
+				cardDefinitionRepository.save(card);
+			});
 	}
 
 	private void renameAndUpsert(
@@ -87,6 +98,7 @@ public class CardCatalogSync implements ApplicationRunner {
 		card.setInitiative(initiative);
 		card.setLevel(level);
 		card.setCreatureTypes(types);
+		card.setFaction(Faction.MIGHT);
 		card.setSpriteHand("/cards/" + hand);
 		card.setSpriteBoard("/cards/" + board);
 	}

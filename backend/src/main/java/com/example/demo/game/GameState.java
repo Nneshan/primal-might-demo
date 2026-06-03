@@ -39,6 +39,7 @@ public class GameState {
 
 	private PendingChoiceType pendingChoice;
 	private List<CardInZone> pendingScryCards = new ArrayList<>();
+	private List<OpponentReplayAction> opponentReplay = new ArrayList<>();
 
 	public Long getGameId() {
 		return gameId;
@@ -233,5 +234,13 @@ public class GameState {
 
 	public boolean hasPendingChoice() {
 		return pendingChoice != null;
+	}
+
+	public List<OpponentReplayAction> getOpponentReplay() {
+		return opponentReplay;
+	}
+
+	public void setOpponentReplay(List<OpponentReplayAction> opponentReplay) {
+		this.opponentReplay = opponentReplay != null ? opponentReplay : new ArrayList<>();
 	}
 }

@@ -1,7 +1,11 @@
 package com.example.demo.entity;
 
+import com.example.demo.game.Faction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,6 +42,10 @@ public class CardDefinition {
 
 	@Column(name = "creature_type", nullable = false, length = 120)
 	private String creatureTypes;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 32, columnDefinition = "varchar(32) not null default 'MIGHT'")
+	private Faction faction = Faction.MIGHT;
 
 	@Column(nullable = false)
 	private String spriteHand;
@@ -115,6 +123,14 @@ public class CardDefinition {
 
 	public void setCreatureTypes(String creatureTypes) {
 		this.creatureTypes = creatureTypes;
+	}
+
+	public Faction getFaction() {
+		return faction;
+	}
+
+	public void setFaction(Faction faction) {
+		this.faction = faction;
 	}
 
 	public String getSpriteHand() {

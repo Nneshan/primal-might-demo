@@ -6,6 +6,7 @@ import './CardTooltip.css';
 
 const VIEWPORT_MARGIN = 12;
 const GAP = 10;
+const HAND_GAP = 24;
 
 function CardTooltip({
   card,
@@ -21,6 +22,8 @@ function CardTooltip({
   const [coords, setCoords] = useState({ top: 0, left: 0, placement: 'above' });
   const wrapRef = useRef(null);
   const tooltipRef = useRef(null);
+
+  const tooltipGap = handStackIndex != null ? HAND_GAP : GAP;
 
   const clampToViewport = useCallback(() => {
     const wrap = wrapRef.current;
@@ -46,15 +49,15 @@ function CardTooltip({
     const spaceAbove = wrapRect.top - VIEWPORT_MARGIN;
     const spaceBelow = window.innerHeight - wrapRect.bottom - VIEWPORT_MARGIN;
     let placement = 'above';
-    let top = wrapRect.top - GAP;
+    let top = wrapRect.top - tooltipGap;
 
-    if (tipHeight + GAP > spaceAbove && spaceBelow >= spaceAbove) {
+    if (tipHeight + tooltipGap > spaceAbove && spaceBelow >= spaceAbove) {
       placement = 'below';
-      top = wrapRect.bottom + GAP;
+      top = wrapRect.bottom + tooltipGap;
     }
 
     setCoords({ top, left: centerX, placement });
-  }, []);
+  }, [tooltipGap]);
 
   useLayoutEffect(() => {
     if (!visible) {
@@ -68,7 +71,7 @@ function CardTooltip({
     if (wrap) {
       const rect = wrap.getBoundingClientRect();
       setCoords({
-        top: rect.top - GAP,
+        top: rect.top - tooltipGap,
         left: rect.left + rect.width / 2,
         placement: 'above',
       });

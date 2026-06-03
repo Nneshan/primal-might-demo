@@ -1,0 +1,89 @@
+.player-deck-pile {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: default;
+  transition: transform 0.14s ease;
+}
+
+.player-deck-pile:hover,
+.player-deck-pile:focus-within {
+  transform: translateY(-12px);
+}
+
+.player-deck-pile__stack {
+  --deck-stack-step: 4px;
+  --deck-stack-depth: 4;
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  padding-left: calc(var(--deck-stack-step) * var(--deck-stack-depth));
+}
+
+.player-deck-pile__layer,
+.player-deck-pile__back {
+  display: block;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+  transition: filter 0.14s ease;
+}
+
+.player-deck-pile__layer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translate(
+    calc(var(--deck-stack-step) * var(--deck-layer-offset, 0)),
+    0
+  );
+}
+
+.player-deck-pile__back--top {
+  position: relative;
+  margin-left: calc(var(--deck-stack-step) * var(--deck-stack-depth));
+  z-index: 5;
+}
+
+.player-deck-pile:hover .player-deck-pile__layer,
+.player-deck-pile:hover .player-deck-pile__back,
+.player-deck-pile:focus-within .player-deck-pile__layer,
+.player-deck-pile:focus-within .player-deck-pile__back {
+  filter: brightness(1.08);
+}
+
+.player-deck-pile__count {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  padding: 0.35rem 0.6rem;
+  background: #1a2e1a;
+  border: 1px solid #8fcf8f;
+  border-radius: 6px;
+  color: #e8f0e8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+  z-index: 120;
+  box-shadow: 0 4px 12px #00000066;
+}
+
+.player-deck-pile:hover .player-deck-pile__count,
+.player-deck-pile:focus-within .player-deck-pile__count {
+  opacity: 1;
+  visibility: visible;
+}

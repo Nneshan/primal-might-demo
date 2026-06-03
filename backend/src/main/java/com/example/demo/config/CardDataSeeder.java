@@ -5,6 +5,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.entity.CardDefinition;
+import com.example.demo.game.Faction;
 import com.example.demo.repository.CardDefinitionRepository;
 
 @Component
@@ -53,6 +54,7 @@ public class CardDataSeeder implements ApplicationRunner {
 		definition.setInitiative(initiative);
 		definition.setLevel(level);
 		definition.setCreatureTypes(types);
+		definition.setFaction(Faction.MIGHT);
 		definition.setSpriteHand("/cards/" + spriteHand);
 		definition.setSpriteBoard("/cards/" + spriteBoard);
 		return definition;

@@ -1,0 +1,67 @@
+.card-tear-burst {
+  position: fixed;
+  z-index: 26000;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.card-tear-burst__half {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+}
+
+.card-tear-burst__clip {
+  height: 100%;
+  overflow: hidden;
+}
+
+.card-tear-burst__clip--left {
+  width: 50%;
+}
+
+.card-tear-burst__clip--right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+}
+
+.card-tear-burst__clip img {
+  display: block;
+  width: 200%;
+  max-width: none;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  user-select: none;
+}
+
+.card-tear-burst__clip--left img {
+  object-position: left center;
+}
+
+.card-tear-burst__clip--right img {
+  margin-left: -100%;
+  object-position: right center;
+}
+
+.card-tear-burst__rip {
+  position: absolute;
+  left: 48%;
+  top: 4%;
+  bottom: 4%;
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #1a0f0a 18%,
+    #3d2818 50%,
+    #1a0f0a 82%,
+    transparent 100%
+  );
+  opacity: 0.85;
+  transform: rotate(4deg);
+}

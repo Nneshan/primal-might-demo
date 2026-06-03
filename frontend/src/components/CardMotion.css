@@ -1,0 +1,24 @@
+.card-motion-hand,
+.card-motion-board {
+  display: block;
+  line-height: 0;
+}
+
+.creature-motion-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.player-board .creature-row,
+.opponent-board .creature-row {
+  perspective: 900px;
+}
+
+.creature-slot--board-enter {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}

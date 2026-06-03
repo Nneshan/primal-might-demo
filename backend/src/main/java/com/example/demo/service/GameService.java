@@ -351,9 +351,11 @@ public class GameService {
 	private GameStateResponseDto saveAndMap(Long gameId, GameState state) {
 		GameSession session = gameSessionRepository.findById(gameId)
 			.orElseThrow(() -> new GameRuleException("Игра не найдена"));
+		GameStateResponseDto dto = gameStateMapper.toDto(state);
+		state.setOpponentReplay(new java.util.ArrayList<>());
 		session.setStateJson(gameStatePersistence.toJson(state));
 		gameSessionRepository.save(session);
-		return gameStateMapper.toDto(state);
+		return dto;
 	}
 
 	private List<Long> starterDeckIds(Map<String, CardDefinition> cardsByName) {
