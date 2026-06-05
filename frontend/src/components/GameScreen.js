@@ -85,6 +85,7 @@ function GameScreen({ onBack }) {
   const playBusyRef = useRef(false);
   const attackBusyRef = useRef(false);
   const hitClearTimerRef = useRef(null);
+  const suppressDrawMotionRef = useRef(new Set());
 
   gameRef.current = game;
 
@@ -282,7 +283,12 @@ function GameScreen({ onBack }) {
               clearTimeout(pendingCommitTimerRef.current);
             }
 
-            const hints = diffPlayerCardMotion(prev, next);
+            let hints = diffPlayerCardMotion(prev, next);
+            if (suppressDrawMotionRef.current.size > 0) {
+              hints = {
+                newInHand: hints.newInHand.filter((id) => !suppressDrawMotionRef.current.has(id)),
+              };
+            }
             pendingCommitTimerRef.current = setTimeout(async () => {
               setTearingCards((current) => current.filter((tear) => !tearIds.has(tear.tearId)));
               setMotionHints(hints);
@@ -296,7 +302,13 @@ function GameScreen({ onBack }) {
       }
 
       if (prev && next && prev.gameId === next.gameId) {
-        setMotionHints(diffPlayerCardMotion(prev, next));
+        let hints = diffPlayerCardMotion(prev, next);
+        if (suppressDrawMotionRef.current.size > 0) {
+          hints = {
+            newInHand: hints.newInHand.filter((id) => !suppressDrawMotionRef.current.has(id)),
+          };
+        }
+        setMotionHints(hints);
         scheduleMotionHintClear();
       } else {
         setMotionHints(emptyMotionHints());
@@ -443,10 +455,27 @@ function GameScreen({ onBack }) {
   const onSkipAttack = () => game && run(() => gameApi.skipAttack(game.gameId));
   const onEndAttack = () => game && run(() => gameApi.endAttackPhase(game.gameId));
 
-  const onPickAncientKnowledge = (pickedInstanceId) => {
-    if (!game) return;
-    run(() => gameApi.resolveAncientKnowledge(game.gameId, pickedInstanceId));
-  };
+  const onAncientKnowledgeResolved = useCallback(
+    async (pickedInstanceId) => {
+      const g = gameRef.current;
+      if (!g) {
+        return;
+      }
+      setLoading(true);
+      setError('');
+      suppressDrawMotionRef.current.add(pickedInstanceId);
+      try {
+        const result = await gameApi.resolveAncientKnowledge(g.gameId, pickedInstanceId);
+        await commitGame(result, { skipTearDelay: true });
+      } catch (e) {
+        setError(e.message);
+        suppressDrawMotionRef.current.delete(pickedInstanceId);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [commitGame]
+  );
 
   const executeAttackApi = useCallback(
     async (motion) => {
@@ -760,8 +789,9 @@ function GameScreen({ onBack }) {
       {game && !spritesLoading && pendingAncientKnowledge && (
         <AncientKnowledgeModal
           options={game.scryOptions}
+          handCount={game.playerHand?.length ?? 0}
           loading={loading}
-          onPick={onPickAncientKnowledge}
+          onResolve={onAncientKnowledgeResolved}
         />
       )}
 
@@ -1120,6 +1150,7 @@ function GameScreen({ onBack }) {
             <div
               className="hand-fan-rows"
               aria-label="Рука игрока"
+              data-hand-fan-rows="true"
               data-hand-rows={Math.ceil(game.playerHand.length / HAND_CARDS_PER_ROW) || 1}
             >
               {splitHandIntoRows(game.playerHand).map((row, rowIndex) => (

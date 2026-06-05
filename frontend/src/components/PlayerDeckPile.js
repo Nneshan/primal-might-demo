@@ -36,6 +36,7 @@ function PlayerDeckPile({ count, faction = 'MIGHT' }) {
   return (
     <div
       className="player-deck-pile"
+      data-player-deck-pile="true"
       aria-label={`Колода игрока, ${label}`}
     >
       <div

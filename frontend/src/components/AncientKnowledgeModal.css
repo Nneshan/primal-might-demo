@@ -2,69 +2,166 @@
   position: fixed;
   inset: 0;
   z-index: 20000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: rgba(8, 16, 8, 0.82);
-  padding: 1rem;
+  transition: background 0.35s ease;
 }
 
-.ancient-knowledge-panel {
-  max-width: 960px;
-  width: 100%;
-  padding: 1.25rem 1.5rem 1.5rem;
-  background: #243824;
-  border: 2px solid #8fcf8f;
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+.ancient-knowledge-overlay--resolving {
+  background: rgba(8, 16, 8, 0.55);
+  pointer-events: none;
 }
 
-.ancient-knowledge-panel h2 {
+.ancient-knowledge-caption {
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  max-width: 640px;
+  width: calc(100% - 2rem);
+  text-align: center;
+  pointer-events: none;
+  z-index: 20001;
+}
+
+.ancient-knowledge-caption h2 {
   margin: 0 0 0.35rem;
   color: #c5e6a5;
   font-size: 1.15rem;
 }
 
-.ancient-knowledge-panel p {
-  margin: 0 0 1rem;
+.ancient-knowledge-caption p {
+  margin: 0;
   color: #d8ead8;
   font-size: 0.95rem;
 }
 
-.ancient-knowledge-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
+.ancient-knowledge-choice {
+  position: fixed;
+  z-index: 20002;
 }
 
 .ancient-knowledge-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 0.5rem;
-  background: #1e301e;
-  border: 2px solid #5a8a5a;
-  border-radius: 10px;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
   color: inherit;
   font: inherit;
+  box-sizing: border-box;
 }
 
-.ancient-knowledge-card:hover:not(:disabled) {
+.ancient-knowledge-card__frame {
+  display: block;
+  line-height: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.ancient-knowledge-card:hover:not(:disabled) .ancient-knowledge-card__frame {
   border-color: #ffd54f;
   box-shadow: 0 0 16px #ffd54f66;
 }
 
 .ancient-knowledge-card:disabled {
-  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.ancient-knowledge-card img {
+.ancient-knowledge-card:disabled .ancient-knowledge-card__frame {
+  opacity: 0.6;
+}
+
+.ancient-knowledge-card img,
+.ancient-knowledge-card__frame img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.ak-scry-anchor {
+  position: fixed;
+  z-index: 25000;
+  pointer-events: none;
+}
+
+.ak-scry-anchor--choose {
+  pointer-events: auto;
+}
+
+.ak-scry-anchor__motion {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.ak-scry-anchor__motion .card-tooltip-wrap {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ak-scry-anchor__sprite {
   display: block;
   width: auto;
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  pointer-events: none;
+}
+
+.ak-pick-card {
+  position: fixed;
+  z-index: 25500;
+  pointer-events: none;
+}
+
+.ak-pick-card__sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.ak-return-card {
+  position: fixed;
+  pointer-events: none;
+  perspective: 900px;
+}
+
+.ak-return-card__flip {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.ak-return-card__face,
+.ak-return-card__back {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ak-return-card__back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
 }

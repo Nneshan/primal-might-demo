@@ -35,6 +35,18 @@ export const drawFromDeckMotion = {
   },
 };
 
+export const drawFromDeckSpring = drawFromDeckMotion.transition;
+
+/** Древние Знания: вылет карт из колоды (сек). */
+export const ANCIENT_KNOWLEDGE_REVEAL_DURATION_S = 0.52;
+
+export const ANCIENT_KNOWLEDGE_REVEAL_STAGGER_S = 0.1;
+
+/** Древние Знания: выбор — в руку / в колоду (сек). */
+export const ANCIENT_KNOWLEDGE_RESOLVE_DURATION_S = 0.48;
+
+export const ANCIENT_KNOWLEDGE_RESOLVE_STAGGER_S = 0.07;
+
 /** MTG-стиль: быстрый выпад к цели (сек). */
 export const ATTACK_STRIKE_DURATION_S = 0.22;
 
