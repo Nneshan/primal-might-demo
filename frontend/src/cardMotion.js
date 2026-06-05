@@ -56,3 +56,16 @@ export const combatReturnTransition = {
   stiffness: 440,
   damping: 34,
 };
+
+/** Полёт снаряда дальней атаки (сек). */
+export const RANGED_PROJECTILE_DURATION_S = 0.34;
+
+export const RANGED_PROJECTILE_HOLD_S = 0.1;
+
+export const RANGED_PROJECTILE_TOTAL_S =
+  RANGED_PROJECTILE_DURATION_S + RANGED_PROJECTILE_HOLD_S;
+
+export const RANGED_PROJECTILE_DURATION_MS = Math.round(RANGED_PROJECTILE_TOTAL_S * 1000);
+
+export const RANGED_IMPACT_FRACTION =
+  RANGED_PROJECTILE_DURATION_S / RANGED_PROJECTILE_TOTAL_S;

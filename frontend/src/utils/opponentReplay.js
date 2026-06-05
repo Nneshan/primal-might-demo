@@ -1,4 +1,5 @@
 import { TEAR_DEATH_DELAY_MS } from '../cardMotion';
+import { buildAttackMotionPayload } from './attackMotion';
 import {
   buildCombatTearRectOverrides,
   findRemovedBoardCreatures,
@@ -79,18 +80,19 @@ export function applyAttackOutcome(display, action) {
   return { ...display, opponentBoard, playerBoard, playerHealth };
 }
 
-export function buildOpponentAttackMotion(action, fromRect, toRect, sprite) {
+export function buildOpponentAttackMotion(action, fromRect, toRect, sprite, card) {
   const isFace = action.type === 'ATTACK_FACE';
-  return {
+  return buildAttackMotionPayload({
     attackerInstanceId: action.attackerInstanceId,
     targetType: isFace ? 'OPPONENT' : 'CREATURE',
     targetInstanceId: isFace ? null : action.targetInstanceId,
     attackerBoard: 'opponent',
     targetBoard: 'player',
     sprite,
+    card,
     fromRect,
     toRect,
-  };
+  });
 }
 
 export function runTearsBetweenStates(before, after, motion, tearApi) {

@@ -13,6 +13,7 @@ import PlayerDeckPile from './PlayerDeckPile';
 import PlayCardHandVanish from './PlayCardHandVanish';
 import CardTearBurst from './CardTearBurst';
 import CardAttackLunge from './CardAttackLunge';
+import CardRangedProjectile from './CardRangedProjectile';
 import CardSprite from './CardSprite';
 import { ensureSpritesReady, preloadCatalogSprites } from '../utils/cardSpritePreload';
 import { getHandFanStyle } from '../utils/handFanLayout';
@@ -47,6 +48,10 @@ import {
   runTearsBetweenStates,
   waitForLayoutPaint,
 } from '../utils/opponentReplay';
+import {
+  buildAttackMotionPayload,
+  shouldHideAttackerDuringAttack,
+} from '../utils/attackMotion';
 
 function GameScreen({ onBack }) {
   const [game, setGame] = useState(null);
@@ -67,6 +72,7 @@ function GameScreen({ onBack }) {
   const [blockRecoil, setBlockRecoil] = useState(null);
   const [playerHitPulse, setPlayerHitPulse] = useState(false);
   const [opponentReplayBusy, setOpponentReplayBusy] = useState(false);
+  const [rangedFireId, setRangedFireId] = useState(null);
   const gameRef = useRef(game);
   const attackMotionRef = useRef(null);
   const lastCombatMotionRef = useRef(null);
@@ -145,9 +151,10 @@ function GameScreen({ onBack }) {
         for (const action of actions) {
           if (action.type === 'PLAY_CARD') {
             display = applyPlayOutcome(display, finalState, action);
+            const playDisplay = display;
             flushSync(() => {
               setBoardEnterIds([action.instanceId]);
-              setGame(display);
+              setGame(playDisplay);
             });
             await waitForLayoutPaint();
             await delay(Math.round(BOARD_ENTER_DURATION * 1000) + 80);
@@ -177,13 +184,19 @@ function GameScreen({ onBack }) {
           const beforeAttack = display;
           await new Promise((resolve) => {
             replayStepResolveRef.current = resolve;
-            setHiddenAttackIds([action.attackerInstanceId]);
             const motion = buildOpponentAttackMotion(
               action,
               fromRect,
               toRect,
-              attacker.card.spriteBoard
+              attacker.card.spriteBoard,
+              attacker.card
             );
+            if (shouldHideAttackerDuringAttack(motion)) {
+              setHiddenAttackIds([action.attackerInstanceId]);
+            }
+            if (motion.attackStyle === 'ranged') {
+              setRangedFireId(action.attackerInstanceId);
+            }
             attackMotionRef.current = motion;
             setAttackMotion(motion);
           });
@@ -196,12 +209,17 @@ function GameScreen({ onBack }) {
           await runTearsBetweenStates(beforeAttack, display, combatMotion, tearPlayer);
           setGame(display);
 
-          if (!action.attackerRemoved && combatMotion) {
+          if (
+            !action.attackerRemoved &&
+            combatMotion &&
+            combatMotion.attackStyle !== 'ranged'
+          ) {
             const offset = computeCombatDelta(combatMotion.fromRect, combatMotion.toRect);
             setCombatReturn({ instanceId: action.attackerInstanceId, ...offset });
             await delay(420);
             setCombatReturn(null);
           }
+          setRangedFireId(null);
         }
 
         await commitGameRef.current?.(finalState, {
@@ -214,6 +232,7 @@ function GameScreen({ onBack }) {
         setLoading(false);
         setHiddenAttackIds([]);
         setAttackMotion(null);
+        setRangedFireId(null);
         replayStepResolveRef.current = null;
       }
     },
@@ -451,7 +470,12 @@ function GameScreen({ onBack }) {
         const survived = (result.playerBoard ?? []).some(
           (c) => c.instanceId === motion.attackerInstanceId
         );
-        if (survived && motion.fromRect && motion.toRect) {
+        if (
+          survived &&
+          motion.fromRect &&
+          motion.toRect &&
+          motion.attackStyle !== 'ranged'
+        ) {
           const offset = computeCombatDelta(motion.fromRect, motion.toRect);
           setCombatReturn({ instanceId: motion.attackerInstanceId, ...offset });
           setTimeout(() => {
@@ -466,6 +490,7 @@ function GameScreen({ onBack }) {
         attackBusyRef.current = false;
         setHiddenAttackIds([]);
         setAttackMotion(null);
+        setRangedFireId(null);
         attackMotionRef.current = null;
         setLoading(false);
       }
@@ -502,17 +527,23 @@ function GameScreen({ onBack }) {
 
       attackBusyRef.current = true;
       setLoading(true);
-      setHiddenAttackIds([attackerId]);
-      const motionPayload = {
+      const motionPayload = buildAttackMotionPayload({
         attackerInstanceId: attackerId,
         targetType,
         targetInstanceId,
         attackerBoard: 'player',
         targetBoard: 'opponent',
         sprite: attacker.card.spriteBoard,
+        card: attacker.card,
         fromRect,
         toRect,
-      };
+      });
+      if (shouldHideAttackerDuringAttack(motionPayload)) {
+        setHiddenAttackIds([attackerId]);
+      }
+      if (motionPayload.attackStyle === 'ranged') {
+        setRangedFireId(attackerId);
+      }
       attackMotionRef.current = motionPayload;
       setAttackMotion(motionPayload);
     },
@@ -564,6 +595,7 @@ function GameScreen({ onBack }) {
       replayStepResolveRef.current = null;
       setHiddenAttackIds([]);
       setAttackMotion(null);
+      setRangedFireId(null);
       resolve();
       return;
     }
@@ -586,7 +618,6 @@ function GameScreen({ onBack }) {
   );
   const pendingAncientKnowledge = game?.pendingChoice === 'ANCIENT_KNOWLEDGE';
   const canAttackFace = isAttack && currentAttacker && Boolean(game?.canAttackFace);
-  const targetsAvailable = (game?.opponentBoard?.length ?? 0) > 0;
 
   const startAttackAiming = (event, attackerInstanceId) => {
     if (!isAttack || attackerInstanceId !== currentAttacker || loading) {
@@ -691,14 +722,22 @@ function GameScreen({ onBack }) {
     <div className="app">
       <AttackLineOverlay line={attackAiming} />
 
-      {attackMotion && (
-        <CardAttackLunge
-          key={`attack-${attackMotion.attackerInstanceId}`}
-          attack={attackMotion}
-          onImpact={onAttackMotionImpact}
-          onStrikeComplete={onAttackStrikeComplete}
-        />
-      )}
+      {attackMotion &&
+        (attackMotion.attackStyle === 'ranged' ? (
+          <CardRangedProjectile
+            key={`ranged-${attackMotion.attackerInstanceId}`}
+            attack={attackMotion}
+            onImpact={onAttackMotionImpact}
+            onStrikeComplete={onAttackStrikeComplete}
+          />
+        ) : (
+          <CardAttackLunge
+            key={`attack-${attackMotion.attackerInstanceId}`}
+            attack={attackMotion}
+            onImpact={onAttackMotionImpact}
+            onStrikeComplete={onAttackStrikeComplete}
+          />
+        ))}
 
       {playVanish && (
         <PlayCardHandVanish
@@ -935,6 +974,7 @@ function GameScreen({ onBack }) {
                             isValidTarget ? 'attack-target' : '',
                             dimTarget ? 'attack-target-blocked' : '',
                             hitTargetSet.has(creature.instanceId) ? 'creature-slot--hit' : '',
+                            rangedFireId === creature.instanceId ? 'creature-slot--ranged-fire' : '',
                             opponentReplayBusy ? 'creature-slot--replay-lock' : '',
                           ]
                             .filter(Boolean)
@@ -1029,6 +1069,7 @@ function GameScreen({ onBack }) {
                               attackAiming?.attackerId === creature.instanceId ? 'attacker-aiming' : '',
                               isAttack && !creature.canAttack ? 'exhausted' : '',
                               hitTargetSet.has(creature.instanceId) ? 'creature-slot--hit' : '',
+                              rangedFireId === creature.instanceId ? 'creature-slot--ranged-fire' : '',
                               opponentReplayBusy ? 'creature-slot--replay-lock' : '',
                             ]
                               .filter(Boolean)

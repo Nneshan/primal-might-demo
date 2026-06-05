@@ -131,9 +131,12 @@ export function buildCombatTearRectOverrides(prev, next, motion) {
   const attackerBoard = motion.attackerBoard ?? 'player';
   const targetBoard = motion.targetBoard ?? 'opponent';
 
+  const attackerTearRect =
+    motion.attackStyle === 'ranged' ? motion.fromRect : impactRect;
+
   for (const entry of removed) {
     if (entry.instanceId === motion.attackerInstanceId && entry.board === attackerBoard) {
-      overrides[entry.instanceId] = impactRect;
+      overrides[entry.instanceId] = attackerTearRect;
       continue;
     }
     if (
