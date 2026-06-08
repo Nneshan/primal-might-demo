@@ -39,6 +39,8 @@ public class GameState {
 
 	private PendingChoiceType pendingChoice;
 	private List<CardInZone> pendingScryCards = new ArrayList<>();
+	private int pendingDivinationTotal;
+	private int pendingDivinationRemaining;
 	private List<OpponentReplayAction> opponentReplay = new ArrayList<>();
 
 	public Long getGameId() {
@@ -234,6 +236,22 @@ public class GameState {
 
 	public boolean hasPendingChoice() {
 		return pendingChoice != null;
+	}
+
+	public int getPendingDivinationTotal() {
+		return pendingDivinationTotal;
+	}
+
+	public void setPendingDivinationTotal(int pendingDivinationTotal) {
+		this.pendingDivinationTotal = pendingDivinationTotal;
+	}
+
+	public int getPendingDivinationRemaining() {
+		return pendingDivinationRemaining;
+	}
+
+	public void setPendingDivinationRemaining(int pendingDivinationRemaining) {
+		this.pendingDivinationRemaining = pendingDivinationRemaining;
 	}
 
 	public List<OpponentReplayAction> getOpponentReplay() {

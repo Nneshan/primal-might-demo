@@ -64,6 +64,14 @@ public class AiService {
 		if (state.getTurnNumber() > 1) {
 			state.setOpponentMaxMana(Math.min(GameState.MAX_MANA, state.getOpponentMaxMana() + 1));
 			state.setOpponentMana(state.getOpponentMaxMana());
+			int divinationCount = abilityService.countDivinationOnBoard(state.getOpponentBoard());
+			for (int i = 0; i < divinationCount; i++) {
+				List<CardInZone> scryCards = abilityService.beginDivination(state.getOpponentDeck());
+				if (scryCards.isEmpty()) {
+					break;
+				}
+				abilityService.resolveDivinationAuto(scryCards, state.getOpponentDeck());
+			}
 			if (!state.getOpponentDeck().isEmpty()) {
 				CardInZone drawn = state.getOpponentDeck().remove(0);
 				state.getOpponentHand().add(drawn);

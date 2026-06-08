@@ -9,6 +9,7 @@ import CardTooltip from './CardTooltip';
 import CardBrief from './CardBrief';
 import AttackLineOverlay from './AttackLineOverlay';
 import AncientKnowledgeModal from './AncientKnowledgeModal';
+import DivinationModal from './DivinationModal';
 import PlayerDeckPile from './PlayerDeckPile';
 import PlayCardHandVanish from './PlayCardHandVanish';
 import CardTearBurst from './CardTearBurst';
@@ -477,6 +478,26 @@ function GameScreen({ onBack }) {
     [commitGame]
   );
 
+  const onDivinationResolved = useCallback(
+    async (putOnBottom) => {
+      const g = gameRef.current;
+      if (!g) {
+        return;
+      }
+      setLoading(true);
+      setError('');
+      try {
+        const result = await gameApi.resolveDivination(g.gameId, putOnBottom);
+        await commitGame(result, { skipTearDelay: true });
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [commitGame]
+  );
+
   const executeAttackApi = useCallback(
     async (motion) => {
       const g = gameRef.current;
@@ -645,7 +666,10 @@ function GameScreen({ onBack }) {
   const currentAttackerCreature = game?.playerBoard?.find(
     (c) => c.instanceId === currentAttacker
   );
-  const pendingAncientKnowledge = game?.pendingChoice === 'ANCIENT_KNOWLEDGE';
+  const pendingChoice = game?.pendingChoice;
+  const pendingAncientKnowledge = pendingChoice === 'ANCIENT_KNOWLEDGE';
+  const pendingDivination = pendingChoice === 'DIVINATION';
+  const hasPendingChoice = Boolean(pendingChoice);
   const canAttackFace = isAttack && currentAttacker && Boolean(game?.canAttackFace);
 
   const startAttackAiming = (event, attackerInstanceId) => {
@@ -795,6 +819,19 @@ function GameScreen({ onBack }) {
         />
       )}
 
+      {game && !spritesLoading && pendingDivination && (
+        <DivinationModal
+          key={`divination-${game.pendingDivinationTotal - game.pendingDivinationRemaining}`}
+          option={game.scryOptions?.[0]}
+          divinationIndex={
+            game.pendingDivinationTotal - game.pendingDivinationRemaining + 1
+          }
+          divinationTotal={game.pendingDivinationTotal}
+          loading={loading}
+          onResolve={onDivinationResolved}
+        />
+      )}
+
       {error && <p className="error">{error}</p>}
 
       {(spritesLoading || (!game && loading)) && (
@@ -888,7 +925,7 @@ function GameScreen({ onBack }) {
                   type="button"
                   onClick={onEndPlay}
                   disabled={
-                    loading || opponentReplayBusy || game.gameOver || pendingAncientKnowledge
+                    loading || opponentReplayBusy || game.gameOver || hasPendingChoice
                   }
                 >
                   Завершить ход
@@ -1185,14 +1222,14 @@ function GameScreen({ onBack }) {
                               type="button"
                               className={[
                                 'hand-card',
-                                item.playable && isPlay && !loading && !game.gameOver && !pendingAncientKnowledge
+                                item.playable && isPlay && !loading && !game.gameOver && !hasPendingChoice
                                   ? 'hand-card--playable'
                                   : '',
                               ]
                                 .filter(Boolean)
                                 .join(' ')}
                               disabled={
-                                !isPlay || loading || game.gameOver || pendingAncientKnowledge || !item.playable
+                                !isPlay || loading || game.gameOver || hasPendingChoice || !item.playable
                               }
                               onClick={(e) => onPlayCard(item.handIndex, e)}
                             >

@@ -110,6 +110,20 @@ public class CardDescriptionSync implements ApplicationRunner {
 				Map.of("minAllyAttack", 3, "bonusDefense", 2)
 			)
 		), "Кто уважает лес, тот получает его защиту. Кто нарушает — встречает её копыта.");
+
+		desc("Дриомант", List.of(
+			ability(
+				AbilityKey.FOREST_UNITY_INIT,
+				"Единство Леса",
+				"Если на поле есть другой дружественный древолюд с силой больше 3, Дриомант получает +1 к инициативе.",
+				Map.of("minAllyAttack", 3, "bonusInitiative", 1)
+			),
+			ability(
+				AbilityKey.DIVINATION,
+				"Прорицание",
+				"В начале хода посмотрите верхнюю карту вашей колоды. Вы можете положить её вниз колоды."
+			)
+		), "Она видела гибель лесов. Она видела их возрождение. Она знает: природа всегда побеждает. Вопрос лишь во времени.");
 	}
 
 	private CardAbilityDto ability(AbilityKey key, String name, String text) {

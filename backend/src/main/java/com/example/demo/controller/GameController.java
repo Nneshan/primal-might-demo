@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.AncientKnowledgeRequest;
+import com.example.demo.dto.DivinationRequest;
 import com.example.demo.dto.AttackRequest;
 import com.example.demo.dto.GameStateResponseDto;
 import com.example.demo.dto.PlayCardRequest;
@@ -47,6 +48,14 @@ public class GameController {
 		@Validated @RequestBody AncientKnowledgeRequest request
 	) {
 		return gameService.resolveAncientKnowledge(gameId, request.getPickedInstanceId());
+	}
+
+	@PostMapping("/{gameId}/divination")
+	public GameStateResponseDto resolveDivination(
+		@PathVariable Long gameId,
+		@Validated @RequestBody DivinationRequest request
+	) {
+		return gameService.resolveDivination(gameId, request.isPutOnBottom());
 	}
 
 	@PostMapping("/{gameId}/end-play-phase")

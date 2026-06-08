@@ -27,38 +27,7 @@ public class CardCatalogSync implements ApplicationRunner {
 		upsert("Корнестраж", 5, 25, 3, 3, 2, 4, "Дух,Древолюд", "RootwardenHand.png", "Rootwarden.png");
 		upsert("Гонец облаков", 3, 8, 4, 0, 9, 2, "Дух", "RunnerOfCloudsHand.png", "RunnerOfClouds.png");
 		upsert("Дриада", 3, 9, 3, 0, 8, 3, "Дух,Древолюд", "DryadHand.png", "Dryad.png");
-		renameAndUpsert("Лесной дух", "Флороид", 2, 5, 2, 0, 3, 1, "Дух,Древолюд", "FloroidHand.png", "Floroid.png");
-		backfillFaction();
-	}
-
-	private void backfillFaction() {
-		cardDefinitionRepository.findAll().stream()
-			.filter(card -> card.getFaction() == null)
-			.forEach(card -> {
-				card.setFaction(Faction.MIGHT);
-				cardDefinitionRepository.save(card);
-			});
-	}
-
-	private void renameAndUpsert(
-		String oldName,
-		String newName,
-		int mana,
-		int health,
-		int attack,
-		int defense,
-		int initiative,
-		int level,
-		String types,
-		String hand,
-		String board
-	) {
-		cardDefinitionRepository.findByName(oldName).ifPresent(card -> {
-			card.setName(newName);
-			apply(card, mana, health, attack, defense, initiative, level, types, hand, board);
-			cardDefinitionRepository.save(card);
-		});
-		upsert(newName, mana, health, attack, defense, initiative, level, types, hand, board);
+		upsert("Дриомант", 3, 8, 3, 0, 5, 3, "Дух,Древолюд", "DriomancerHand.png", "Driomancer.png");
 	}
 
 	private void upsert(

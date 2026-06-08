@@ -1,0 +1,37 @@
+.divination-actions {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 20003;
+}
+
+.divination-actions__btn {
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(197, 230, 165, 0.45);
+  border-radius: 6px;
+  background: rgba(16, 32, 16, 0.92);
+  color: #d8ead8;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.divination-actions__btn:hover:not(:disabled) {
+  background: rgba(28, 52, 28, 0.95);
+}
+
+.divination-actions__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.divination-actions__btn--primary {
+  border-color: rgba(197, 230, 165, 0.75);
+  color: #c5e6a5;
+}
+
+.ancient-knowledge-card--static {
+  cursor: default;
+  pointer-events: none;
+}

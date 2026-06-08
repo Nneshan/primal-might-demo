@@ -52,3 +52,10 @@ export function resolveAncientKnowledge(gameId, pickedInstanceId) {
     body: JSON.stringify({ pickedInstanceId }),
   });
 }
+
+export function resolveDivination(gameId, putOnBottom) {
+  return request(`/api/games/${gameId}/divination`, {
+    method: 'POST',
+    body: JSON.stringify({ putOnBottom }),
+  });
+}

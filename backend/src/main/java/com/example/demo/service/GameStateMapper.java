@@ -68,7 +68,10 @@ public class GameStateMapper {
 		dto.setGameOver(state.isGameOver());
 		dto.setWinner(state.getWinner());
 		dto.setPendingChoice(state.getPendingChoice());
-		if (state.getPendingChoice() == PendingChoiceType.ANCIENT_KNOWLEDGE) {
+		dto.setPendingDivinationTotal(state.getPendingDivinationTotal());
+		dto.setPendingDivinationRemaining(state.getPendingDivinationRemaining());
+		if (state.getPendingChoice() == PendingChoiceType.ANCIENT_KNOWLEDGE
+			|| state.getPendingChoice() == PendingChoiceType.DIVINATION) {
 			dto.setScryOptions(mapHand(state.getPendingScryCards(), definitions));
 		}
 		dto.setCanAttackFace(computeCanAttackFace(state));

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
@@ -154,6 +155,12 @@ public class AbilityService {
 		if (tailwindOnField && hasAbility(card, AbilityKey.FLIGHT)) {
 			initiative += 1;
 		}
+		if (hasAbility(card, AbilityKey.FOREST_UNITY_INIT)) {
+			CardAbilityDto ability = findAbility(card, AbilityKey.FOREST_UNITY_INIT);
+			if (hasOtherTreantWithAttackAbove(friendlyBoard, creature, ability.param("minAllyAttack", 3))) {
+				initiative += ability.param("bonusInitiative", 1);
+			}
+		}
 		return initiative;
 	}
 
@@ -189,6 +196,36 @@ public class AbilityService {
 			return true;
 		}
 		return taunts.stream().anyMatch(taunt -> taunt.getInstanceId().equals(chosenDefender.getInstanceId()));
+	}
+
+	public int countDivinationOnBoard(List<CreatureOnBoard> board) {
+		return (int) board.stream()
+			.filter(CreatureOnBoard::isAlive)
+			.filter(creature -> hasAbility(requireCard(creature.getCardDefinitionId()), AbilityKey.DIVINATION))
+			.count();
+	}
+
+	public List<CardInZone> beginDivination(List<CardInZone> deck) {
+		if (deck.isEmpty()) {
+			return List.of();
+		}
+		return List.of(deck.remove(0));
+	}
+
+	public void resolveDivination(CardInZone scryCard, List<CardInZone> deck, boolean putOnBottom) {
+		if (putOnBottom) {
+			deck.add(scryCard);
+		}
+		else {
+			deck.add(0, scryCard);
+		}
+	}
+
+	public void resolveDivinationAuto(List<CardInZone> scryCards, List<CardInZone> deck) {
+		if (scryCards.isEmpty()) {
+			return;
+		}
+		resolveDivination(scryCards.get(0), deck, ThreadLocalRandom.current().nextBoolean());
 	}
 
 	public List<CardInZone> beginAncientKnowledge(List<CardInZone> deck) {

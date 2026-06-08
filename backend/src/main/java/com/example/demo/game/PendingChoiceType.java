@@ -1,5 +1,6 @@
 package com.example.demo.game;
 
 public enum PendingChoiceType {
-	ANCIENT_KNOWLEDGE
+	ANCIENT_KNOWLEDGE,
+	DIVINATION
 }

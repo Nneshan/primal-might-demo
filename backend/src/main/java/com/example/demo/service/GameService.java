@@ -82,6 +82,31 @@ public class GameService {
 	}
 
 	@Transactional
+	public GameStateResponseDto resolveDivination(Long gameId, boolean putOnBottom) {
+		GameState state = loadState(gameId);
+		ensurePlayerTurn(state);
+		ensurePendingChoice(state, PendingChoiceType.DIVINATION);
+
+		List<CardInZone> scryCards = state.getPendingScryCards();
+		if (scryCards.isEmpty()) {
+			throw new GameRuleException("Нет карты для прорицания");
+		}
+
+		abilityService.resolveDivination(scryCards.get(0), state.getPlayerDeck(), putOnBottom);
+		state.getPendingScryCards().clear();
+		state.setPendingChoice(null);
+		state.setPendingDivinationRemaining(state.getPendingDivinationRemaining() - 1);
+
+		if (tryBeginNextPlayerDivination(state)) {
+			return saveAndMap(gameId, state);
+		}
+
+		clearDivinationQueue(state);
+		finishPlayerTurnStart(state);
+		return saveAndMap(gameId, state);
+	}
+
+	@Transactional
 	public GameStateResponseDto resolveAncientKnowledge(Long gameId, String pickedInstanceId) {
 		GameState state = loadState(gameId);
 		ensurePlayerTurn(state);
@@ -259,16 +284,51 @@ public class GameService {
 		state.setPlayerMaxMana(Math.min(GameState.MAX_MANA, state.getPlayerMaxMana() + 1));
 		state.setPlayerMana(state.getPlayerMaxMana());
 
-		if (state.getTurnNumber() > 1) {
-			deckFactory.drawCards(state.getPlayerDeck(), state.getPlayerHand(), 1);
-		}
-
 		for (CreatureOnBoard creature : state.getPlayerBoard()) {
 			if (creature.isAlive()) {
 				creature.setCanAttack(true);
 			}
 		}
 
+		int divinationCount = abilityService.countDivinationOnBoard(state.getPlayerBoard());
+		state.setPendingDivinationTotal(divinationCount);
+		state.setPendingDivinationRemaining(divinationCount);
+
+		if (tryBeginNextPlayerDivination(state)) {
+			return;
+		}
+
+		clearDivinationQueue(state);
+		finishPlayerTurnStart(state);
+	}
+
+	private boolean tryBeginNextPlayerDivination(GameState state) {
+		if (state.getPendingDivinationRemaining() <= 0) {
+			return false;
+		}
+		List<CardInZone> scryCards = abilityService.beginDivination(state.getPlayerDeck());
+		if (scryCards.isEmpty()) {
+			return false;
+		}
+		state.setPendingChoice(PendingChoiceType.DIVINATION);
+		state.setPendingScryCards(scryCards);
+		int index = state.getPendingDivinationTotal() - state.getPendingDivinationRemaining() + 1;
+		String progress = state.getPendingDivinationTotal() > 1
+			? " (" + index + " из " + state.getPendingDivinationTotal() + ")"
+			: "";
+		state.setLastMessage("Прорицание" + progress + ": оставьте карту сверху или положите её вниз колоды");
+		return true;
+	}
+
+	private void clearDivinationQueue(GameState state) {
+		state.setPendingDivinationTotal(0);
+		state.setPendingDivinationRemaining(0);
+	}
+
+	private void finishPlayerTurnStart(GameState state) {
+		if (state.getTurnNumber() > 1) {
+			deckFactory.drawCards(state.getPlayerDeck(), state.getPlayerHand(), 1);
+		}
 		state.setLastMessage("Ваш ход " + state.getTurnNumber() + ". Фаза разыгрывания.");
 	}
 
@@ -317,7 +377,7 @@ public class GameService {
 
 	private void ensureNoPendingChoice(GameState state) {
 		if (state.hasPendingChoice()) {
-			throw new GameRuleException("Сначала завершите выбор «Древних знаний»");
+			throw new GameRuleException("Сначала завершите текущий выбор");
 		}
 	}
 
@@ -373,6 +433,8 @@ public class GameService {
 		deck.add(card(cardsByName, "Гонец облаков"));
 		deck.add(card(cardsByName, "Гонец облаков"));
 		deck.add(card(cardsByName, "Гонец облаков"));
+		deck.add(card(cardsByName, "Дриомант"));
+		deck.add(card(cardsByName, "Дриомант"));
 		return deck;
 	}
 

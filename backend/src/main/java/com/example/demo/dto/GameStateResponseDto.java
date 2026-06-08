@@ -37,6 +37,8 @@ public class GameStateResponseDto {
 	private String winner;
 
 	private PendingChoiceType pendingChoice;
+	private int pendingDivinationTotal;
+	private int pendingDivinationRemaining;
 	private List<HandCardDto> scryOptions;
 	private boolean canAttackFace;
 	private List<OpponentReplayActionDto> opponentReplay;
@@ -223,6 +225,22 @@ public class GameStateResponseDto {
 
 	public void setPendingChoice(PendingChoiceType pendingChoice) {
 		this.pendingChoice = pendingChoice;
+	}
+
+	public int getPendingDivinationTotal() {
+		return pendingDivinationTotal;
+	}
+
+	public void setPendingDivinationTotal(int pendingDivinationTotal) {
+		this.pendingDivinationTotal = pendingDivinationTotal;
+	}
+
+	public int getPendingDivinationRemaining() {
+		return pendingDivinationRemaining;
+	}
+
+	public void setPendingDivinationRemaining(int pendingDivinationRemaining) {
+		this.pendingDivinationRemaining = pendingDivinationRemaining;
 	}
 
 	public List<HandCardDto> getScryOptions() {
