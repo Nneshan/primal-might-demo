@@ -41,6 +41,10 @@ public class AbilityService {
 			.anyMatch(ability -> abilityKey.name().equals(ability.getKey()));
 	}
 
+	public boolean canAttackOnPlay(CardDefinition card) {
+		return hasAbility(card, AbilityKey.RESOLVE);
+	}
+
 	public boolean hasRockSolidity(CardDefinition card) {
 		if (card == null) {
 			return false;
@@ -68,7 +72,7 @@ public class AbilityService {
 
 	public int getEffectiveDefense(CreatureOnBoard creature, List<CreatureOnBoard> friendlyBoard) {
 		CardDefinition card = requireCard(creature.getCardDefinitionId());
-		int defense = creature.getDefense();
+		int defense = Math.max(0, creature.getDefense() + creature.getDefenseModifier());
 		if (hasAbility(card, AbilityKey.FOREST_UNITY_DEF)) {
 			CardAbilityDto ability = findAbility(card, AbilityKey.FOREST_UNITY_DEF);
 			int minAllyAttack = ability.param("minAllyAttack", 3);
@@ -134,11 +138,50 @@ public class AbilityService {
 		List<CreatureOnBoard> attackerBoard,
 		List<CreatureOnBoard> defenderBoard
 	) {
+		CardDefinition attackerCard = requireCard(attacker.getCardDefinitionId());
+		if (hasAbility(attackerCard, AbilityKey.SQUALL)) {
+			applySquallDamage(attackerCard, defenderBoard);
+		}
+
 		int toDefender = computeDamageToDefender(attacker, defender, attackerBoard, defenderBoard);
 		int toAttacker = computeCounterDamage(attacker, defender, attackerBoard, defenderBoard);
 		defender.setCurrentHealth(defender.getCurrentHealth() - toDefender);
 		attacker.setCurrentHealth(attacker.getCurrentHealth() - toAttacker);
 		attacker.setCanAttack(false);
+
+		if (hasAbility(attackerCard, AbilityKey.PURSUIT) && defender.isAlive()) {
+			applyPursuitDebuff(attackerCard, defender);
+		}
+	}
+
+	public void clearPursuitDebuffs(List<CreatureOnBoard> board) {
+		for (CreatureOnBoard creature : board) {
+			if (creature.isPursuitDebuffClearOnOwnerTurnEnd()) {
+				creature.setDefenseModifier(0);
+				creature.setPursuitDebuffClearOnOwnerTurnEnd(false);
+			}
+		}
+	}
+
+	private void applySquallDamage(CardDefinition attackerCard, List<CreatureOnBoard> defenderBoard) {
+		CardAbilityDto ability = findAbility(attackerCard, AbilityKey.SQUALL);
+		int damage = ability.param("damage", 2);
+		for (CreatureOnBoard enemy : defenderBoard) {
+			if (!enemy.isAlive()) {
+				continue;
+			}
+			CardDefinition enemyCard = requireCard(enemy.getCardDefinitionId());
+			if (hasAbility(enemyCard, AbilityKey.FLIGHT)) {
+				enemy.setCurrentHealth(enemy.getCurrentHealth() - damage);
+			}
+		}
+	}
+
+	private void applyPursuitDebuff(CardDefinition attackerCard, CreatureOnBoard defender) {
+		CardAbilityDto ability = findAbility(attackerCard, AbilityKey.PURSUIT);
+		int penalty = ability.param("armorPenalty", 2);
+		defender.setDefenseModifier(defender.getDefenseModifier() - penalty);
+		defender.setPursuitDebuffClearOnOwnerTurnEnd(true);
 	}
 
 	public int computeFaceDamage(CreatureOnBoard attacker, List<CreatureOnBoard> attackerBoard) {

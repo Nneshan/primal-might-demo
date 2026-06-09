@@ -117,7 +117,7 @@ public class AiService {
 		creature.setDefense(definition.getDefense());
 		creature.setInitiative(definition.getInitiative());
 		creature.setBoardIndex(nextBoardIndex(state.getOpponentBoard()));
-		creature.setCanAttack(false);
+		creature.setCanAttack(abilityService.canAttackOnPlay(definition));
 		state.getOpponentBoard().add(creature);
 
 		recordPlayCard(state, card.getInstanceId(), definition);

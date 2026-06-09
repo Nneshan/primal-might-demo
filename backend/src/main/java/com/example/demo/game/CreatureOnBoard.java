@@ -9,6 +9,8 @@ public class CreatureOnBoard {
 	private int attack;
 	private int defense;
 	private int initiative;
+	private int defenseModifier;
+	private boolean pursuitDebuffClearOnOwnerTurnEnd;
 	private boolean canAttack;
 
 	public String getInstanceId() {
@@ -65,6 +67,22 @@ public class CreatureOnBoard {
 
 	public void setInitiative(int initiative) {
 		this.initiative = initiative;
+	}
+
+	public int getDefenseModifier() {
+		return defenseModifier;
+	}
+
+	public void setDefenseModifier(int defenseModifier) {
+		this.defenseModifier = defenseModifier;
+	}
+
+	public boolean isPursuitDebuffClearOnOwnerTurnEnd() {
+		return pursuitDebuffClearOnOwnerTurnEnd;
+	}
+
+	public void setPursuitDebuffClearOnOwnerTurnEnd(boolean pursuitDebuffClearOnOwnerTurnEnd) {
+		this.pursuitDebuffClearOnOwnerTurnEnd = pursuitDebuffClearOnOwnerTurnEnd;
 	}
 
 	public boolean isCanAttack() {

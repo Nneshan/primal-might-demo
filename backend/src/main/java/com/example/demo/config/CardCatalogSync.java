@@ -28,6 +28,7 @@ public class CardCatalogSync implements ApplicationRunner {
 		upsert("Гонец облаков", 3, 8, 4, 0, 9, 2, "Дух", "RunnerOfCloudsHand.png", "RunnerOfClouds.png");
 		upsert("Дриада", 3, 9, 3, 0, 8, 3, "Дух,Древолюд", "DryadHand.png", "Dryad.png");
 		upsert("Дриомант", 3, 8, 3, 0, 5, 3, "Дух,Древолюд", "DriomancerHand.png", "Driomancer.png");
+		upsert("Резвый Циклон", 5, 12, 7, 0, 8, 5, "Дух", "QuickCycloneHand.png", "QuickCyclone.png");
 	}
 
 	private void upsert(

@@ -124,6 +124,25 @@ public class CardDescriptionSync implements ApplicationRunner {
 				"В начале хода посмотрите верхнюю карту вашей колоды. Вы можете положить её вниз колоды."
 			)
 		), "Она видела гибель лесов. Она видела их возрождение. Она знает: природа всегда побеждает. Вопрос лишь во времени.");
+
+		desc("Резвый Циклон", List.of(
+			ability(
+				AbilityKey.FLIGHT,
+				"Полёт",
+				"Может быть заблокирован только существами с *Полёт* или *Перехват*."
+			),
+			ability(
+				AbilityKey.SQUALL,
+				"Шквал",
+				"При атаке Резвый Циклон наносит 2 урона всем вражеским существам с *Полёт*.",
+				Map.of("damage", 2)
+			),
+			ability(
+				AbilityKey.RESOLVE,
+				"Решимость",
+				"Может атаковать в тот же ход, когда был разыгран."
+			)
+		), "Пока отсутствует");
 	}
 
 	private CardAbilityDto ability(AbilityKey key, String name, String text) {

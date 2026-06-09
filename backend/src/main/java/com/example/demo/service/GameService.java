@@ -258,8 +258,10 @@ public class GameService {
 
 		state.setAttackQueue(List.of());
 		state.setAttackQueueIndex(0);
+		abilityService.clearPursuitDebuffs(state.getPlayerBoard());
 		aiService.runOpponentTurn(state);
 		if (!state.isGameOver()) {
+			abilityService.clearPursuitDebuffs(state.getOpponentBoard());
 			beginPlayerTurn(state);
 		}
 		return saveAndMap(gameId, state);
@@ -345,7 +347,7 @@ public class GameService {
 		creature.setDefense(definition.getDefense());
 		creature.setInitiative(definition.getInitiative());
 		creature.setBoardIndex(boardIndex);
-		creature.setCanAttack(false);
+		creature.setCanAttack(abilityService.canAttackOnPlay(definition));
 		return creature;
 	}
 
@@ -435,6 +437,8 @@ public class GameService {
 		deck.add(card(cardsByName, "Гонец облаков"));
 		deck.add(card(cardsByName, "Дриомант"));
 		deck.add(card(cardsByName, "Дриомант"));
+		deck.add(card(cardsByName, "Резвый Циклон"));
+		deck.add(card(cardsByName, "Резвый Циклон"));
 		return deck;
 	}
 
